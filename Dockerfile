@@ -27,9 +27,9 @@ RUN cd /app/zone-mta && npm install --production
 COPY . /app
 
 RUN set -ex; \
-   cd /app/client && \
-   npm run build && \
-   rm -rf node_modules
+    cd /app/client && \
+    npm run build && \
+    rm -rf node_modules
 
 # Final Image
 FROM node:10-alpine
@@ -42,6 +42,6 @@ RUN set -ex; \
     pwgen netcat-openbsd bash imagemagick
 
 COPY --from=builder /app/ /app/
-
+COPY DigiCertGlobalRootCA.crt.pem /app/
 EXPOSE 3000 3003 3004
 ENTRYPOINT ["bash", "/app/docker-entrypoint.sh"]

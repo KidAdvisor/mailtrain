@@ -2,18 +2,20 @@
 
 const config = require('./config');
 const path = require('path');
-
+const fs = require('fs');
 const knexConstructor = require('knex');
 
 const knex = require('knex')({
     client: 'mysql',
     connection: {
         ...config.mysql,
+        ssl: {
+            ca: fs.readFileSync('/app/DigiCertGlobalRootCA.crt.pem')
+        },
+        charset: 'utf8mb4',
+        multipleStatements: true,
 
-	charset: 'utf8mb4',
-	multipleStatements: true,
-
-	// DATE and DATETIME types contain no timezone info. The MySQL driver tries to interpret them w.r.t. to local time, which
+        // DATE and DATETIME types contain no timezone info. The MySQL driver tries to interpret them w.r.t. to local time, which
         // does not work well with assigning these values in UTC and handling them as if in UTC
         dateStrings: [
             'DATE',
