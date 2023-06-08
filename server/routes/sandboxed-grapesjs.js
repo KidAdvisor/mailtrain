@@ -14,9 +14,9 @@ const contextHelpers = require('../lib/context-helpers');
 
 const { getTrustedUrl, getSandboxUrl, getPublicUrl } = require('../lib/urls');
 const { AppType } = require('../../shared/app');
+const log = require('../lib/log');
 
-
-users.registerRestrictedAccessTokenMethod('grapesjs', async ({entityTypeId, entityId}) => {
+users.registerRestrictedAccessTokenMethod('grapesjs', async ({ entityTypeId, entityId }) => {
     if (entityTypeId === 'template') {
         const tmpl = await templates.getById(contextHelpers.getAdminContext(), entityId, false);
 
@@ -35,11 +35,16 @@ users.registerRestrictedAccessTokenMethod('grapesjs', async ({entityTypeId, enti
 
 async function getRouter(appType) {
     const router = routerFactory.create();
-    
+
+    log.info('HTTP', `App Type in grapejs editor: ${appType}`);
+    log.info('HTTP', `publicPath/sandbox url: ${getSandboxUrl()}`);
+    log.info('HTTP', `Trusted url: ${getTrustedUrl()}`);
+    log.info('HTTP', `Public url: ${getPublicUrl()}`);
     if (appType === AppType.SANDBOXED) {
         router.getAsync('/editor', passport.csrfProtection, async (req, res) => {
             const mailtrainConfig = await clientHelpers.getAnonymousConfig(req.context, appType);
 
+            log.info('HTTP', 'Rendering the sandboxed grapejs')
             res.render('grapesjs/root', {
                 layout: 'grapesjs/layout',
                 reactCsrfToken: req.csrfToken(),
@@ -53,7 +58,7 @@ async function getRouter(appType) {
 
         fileHelpers.installUploadHandler(router, '/upload/:type/:entityId', files.ReplacementBehavior.RENAME, null, 'file', resp => {
             return {
-                data: resp.files.map( f => ({type: 'image', src: f.url}) )
+                data: resp.files.map(f => ({ type: 'image', src: f.url }))
             };
         });
 

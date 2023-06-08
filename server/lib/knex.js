@@ -9,9 +9,6 @@ const knex = require('knex')({
     client: 'mysql',
     connection: {
         ...config.mysql,
-        ssl: {
-            ca: fs.readFileSync('/app/DigiCertGlobalRootCA.crt.pem')
-        },
         charset: 'utf8mb4',
         multipleStatements: true,
 

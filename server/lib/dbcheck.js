@@ -14,22 +14,14 @@ const bluebird = require('bluebird');
 
 const highestLegacySchemaVersion = 34;
 
-console.log(fs.readFileSync('/app/DigiCertGlobalRootCA.crt.pem'))
-
 const mysqlConfig = {
-    multipleStatements: true,
-    ssl: {
-        ca: fs.readFileSync('/app/DigiCertGlobalRootCA.crt.pem')
-    }
+    multipleStatements: true
 };
-// const mysqlConfig = {
-//     multipleStatements: true
-// };
 
 Object.keys(config.mysql).forEach(key => mysqlConfig[key] = config.mysql[key]);
-console.log(mysqlConfig);
 
 const db = mysql.createPool(mysqlConfig);
+console.log(`Connected to mysql server: ${mysqlConfig.host}`);
 
 function listTables(callback) {
     db.getConnection((err, connection) => {
